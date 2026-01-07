@@ -43,14 +43,12 @@ class DemoRestApiItem(APIView):
         data = request.data
         tabien = False
 
-        if len(data) < len(data_list[0]) - 1:
-            return Response({"error": "Campos incompletos"}, status=status.HTTP_400_BAD_REQUEST)
         
         for elem in data_list:
             if elem["id"] == id:
-                elem["name"] = data["name"]
-                elem["email"] = data["email"]
-                elem["is_active"] = data["is_active"]
+                elem["name"] = data.get("name")
+                elem["email"] = data.get("email")
+                elem["is_active"] = data.get("is_active", True)
                 tabien = True
 
         if not tabien:

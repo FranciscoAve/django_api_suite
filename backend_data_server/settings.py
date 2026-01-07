@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 import os
+import firebase_admin
+from firebase_admin import credentials
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -41,6 +43,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "homepage",
     "demo_rest_api",
+    "firebase_admin",
+    "landing_api",
     "rest_framework",
 ]
 
@@ -123,3 +127,10 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, STATIC_URL),
 ]
+
+FIREBASE_CREDENTIALS_PATH = credentials.Certificate("secrets/landing-key.json")
+
+firebase_admin.initialize_app(FIREBASE_CREDENTIALS_PATH, {
+    'databaseURL':'https://landing-c92b0-default-rtdb.firebaseio.com'
+})
+
