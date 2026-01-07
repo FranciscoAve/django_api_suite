@@ -37,18 +37,56 @@ class DemoRestApi(APIView):
         return Response({'message':'Dato guardado exitosamente','data':body}, status= status.HTTP_201_CREATED)
 
 class DemoRestApiItem(APIView):
-    name = "Demo REST API 2.0"
-    def put(self, request):
+    name = "Demo REST API Item"
+
+    def put(self, request, id):
         data = request.data
         tabien = False
+
+        if len(data) < len(data_list[0]) - 1:
+            return Response({"error": "Campos incompletos"}, status=status.HTTP_400_BAD_REQUEST)
+        
         for elem in data_list:
-            if elem["id"] == data['id']:
+            if elem["id"] == id:
                 elem["name"] = data["name"]
                 elem["email"] = data["email"]
                 elem["is_active"] = data["is_active"]
                 tabien = True
+
         if not tabien:
-            return Response({"error":"errorrrrrrrr"}, status= status.HTTP_400_BAD_REQUEST)
+            return Response({"error":"Elemento no encontrado con el id proporcionado"}, status= status.HTTP_404_NOT_FOUND)
         else:
-            return Response(data_list, status= status.HTTP_200_OK)
+            return Response({"message": "Elemento actualizado exitosamente","data":data_list}, status= status.HTTP_200_OK)
         
+    def patch(self, request, id):
+        data = request.data
+        tabien = False
+        
+        for elem in data_list:
+            if elem["id"] == id:
+                for clave in data:
+                    if clave != "id": #no reemplazo del id
+                        elem[clave] = data[clave]
+                tabien = True
+
+        if not tabien:
+            return Response({"error":"Elemento no encontrado con el id proporcionado"}, status= status.HTTP_404_NOT_FOUND)
+        else:
+            return Response({"error":"Elemento actualizado parcialmente","data":data_list}, status= status.HTTP_200_OK)
+    
+    def delete(self,request, id):
+        data = request.data
+        tabien=False
+
+        for elem in data_list:
+            if elem.get("id") == id:
+                elem["is_active"] = False
+                tabien = True
+        
+        if not tabien:
+            return Response({"error":"Elemento no encontrado con el id proporcionado"}, status= status.HTTP_404_NOT_FOUND)
+        else:
+            return Response({"message":"Elemento eliminado lógicamente","data":data_list}, status= status.HTTP_200_OK)
+
+
+
